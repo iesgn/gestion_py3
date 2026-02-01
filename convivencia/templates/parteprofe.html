@@ -65,9 +65,27 @@
                                     {% endfor %}
                                 </div>
 
-                                <div class="mb-3 col-md-6">
-                                    <label for="inputPassword4" class="form-label">{{ form.Tipo.label_tag }}</label>
-                                    {{ form.Tipo }}
+                                <div class="mb-3 col-md-4">
+                                    <label class="form-label">{{ form.Tipo.label_tag }}</label>
+                                    {{ form.Tipo }}  <!-- Mantiene el select original de Django -->
+
+                                    <!-- AÑADIR data-tipo-falta a cada OPTION vía JS -->
+                                    <script>
+                                        $(document).ready(function () {
+                                            // Extraer TipoFalta de cada option y añadir data-tipo-falta
+                                            $('#{{ form.Tipo.id_for_label }} option').each(function () {
+                                                const optionText = $(this).text();
+                                                // Buscar patrón "(G) Nombre" o "(L) Nombre"
+                                                const match = optionText.match(/^\((\w)\)\s*(.*)$/);
+                                                if (match) {
+                                                    $(this).attr('data-tipo-falta', match[1]);
+                                                } else {
+                                                    $(this).attr('data-tipo-falta', 'L'); // Por defecto Leve
+                                                }
+                                            });
+                                        });
+                                    </script>
+
                                     {% if form.Tipo.help_text %}
                                         <span class="help-block">{{ form.Tipo.help_text }}</span>
                                     {% endif %}
@@ -75,6 +93,7 @@
                                         <span class="text-danger">{{ error }}</span>
                                     {% endfor %}
                                 </div>
+
                             </div>
 
                             <div class="mb-3">
@@ -88,7 +107,7 @@
                                 {% endfor %}
                             </div>
 
-                            <div class="mb-2">
+                            <div class="mb-2 derivado-convivencia-container" style="display: none;">
                                 <div class="form-check fs-xl mb-2">
                                     {{ form.DerivadoConvivencia }}
                                     <label class="form-check-label fs-base"
@@ -280,8 +299,47 @@
             });
 
 
+
         });
 
     </script>
+
+    <script>
+        $(document).ready(function () {
+            // 1. Añadir data-tipo-falta a options
+            $('#{{ form.Tipo.id_for_label }} option').each(function () {
+                const optionText = $(this).text();
+                const match = optionText.match(/^\((\w)\)\s*(.*)$/);
+                if (match) {
+                    $(this).attr('data-tipo-falta', match[1]);
+                } else {
+                    $(this).attr('data-tipo-falta', 'L');
+                }
+            });
+
+            // 2. Función mostrar/ocultar
+            function toggleCheckbox() {
+                const $select = $('#{{ form.Tipo.id_for_label }}');
+                const tipoFalta = $select.find('option:selected').data('tipo-falta');
+                const $contenedor = $('.derivado-convivencia-container');
+                const $checkbox = $('#{{ form.DerivadoConvivencia.id_for_label }}');
+
+                if (tipoFalta === 'G') {
+                    $contenedor.slideDown(300);
+                    $checkbox.prop('checked', false);
+                } else {
+                    $contenedor.slideUp(300);
+                    $checkbox.prop('checked', false);
+                }
+            }
+
+            // 3. Event listener
+            $('#{{ form.Tipo.id_for_label }}').on('change', toggleCheckbox);
+
+            // 4. Inicializar
+            toggleCheckbox();
+        });
+    </script>
+
 {% endblock %}
 

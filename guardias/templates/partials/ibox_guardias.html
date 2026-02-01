@@ -22,6 +22,22 @@
                                             <span class="badge badge-label bg-secondary position-absolute" style="top: -5px; right: -10px;">
                                                 ACE
                                             </span>
+                                        {% elif profesor_guardia.es_guardia_PG1 %}
+                                            <span class="badge badge-label bg-secondary position-absolute" style="top: -5px; right: -10px;">
+                                                PG 1
+                                            </span>
+                                        {% elif profesor_guardia.es_guardia_PG2 %}
+                                            <span class="badge badge-label bg-secondary position-absolute" style="top: -5px; right: -10px;">
+                                                PG 2
+                                            </span>
+                                        {% elif profesor_guardia.es_guardia_PG3 %}
+                                            <span class="badge badge-label bg-secondary position-absolute" style="top: -5px; right: -10px;">
+                                                PG 3
+                                            </span>
+                                        {% elif profesor_guardia.es_guardia_PG4 %}
+                                            <span class="badge badge-label bg-secondary position-absolute" style="top: -5px; right: -10px;">
+                                                PG 4
+                                            </span>
                                         {% endif %}
                                         <h3 class="card-title"><strong>{{ profesor_guardia.nombre }}</strong></h3>
                                         <div class="mt-1">{{ profesor_guardia.materia }}</div>

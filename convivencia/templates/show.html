@@ -126,6 +126,7 @@
                                 <tr class="" data-profesor="{{ h.Profesor|default:'' }}"
                                         {% if tipo == 'amonestacion' %}
                                     data-hora="{{ horas|slice:h.Hora|last }}"
+                                    data-as="{{ contar }}" data-ashist="{{ contarhist }}"
                                         {% else %}
                                     data-hora=""
                                         {% endif %}
@@ -251,7 +252,14 @@
                     data: null,
                     defaultContent: '<i class="ti ti-square-rounded-plus-filled text-primary align-middle fs-22"></i>'
                 },
-                null, null, null, null, null, null, null, null
+                null,  // N.
+                null,  // Alumno
+                null,  // Tipo
+                null,  // Fecha
+                null,  // Unidad
+                null,  // A/S ← EXPLÍCITO: permite ordenación/reordenamiento sin perder datos
+                null,  // A/S Hist. ← EXPLÍCITO
+                null   // Tramo
             ];
 
             const columnsSancion = [

@@ -2,7 +2,7 @@
 ╔════════════════════════════════════════════════════════════════════════════╗
 ║                          GESTION@ - GESTIÓN DE CENTROS EDUCATIVOS         ║
 ║                                                                            ║
-║ Copyright © 2023-2025 Francisco Fornés Rumbao, Raúl Reina Molina          ║
+║ Copyright © 2023-2026 Francisco Fornés Rumbao, Raúl Reina Molina          ║
 ║                          Proyecto base por José Domingo Muñoz Rodríguez    ║
 ║                                                                            ║
 ║ Todos los derechos reservados. Prohibida la reproducción, distribución,   ║
@@ -384,10 +384,38 @@ def show(request, tipo=None, mes=None, ano=None, dia=None):
 
     form = ResumenForm(initial={'fecha': fecha, 'tipo': tipo})
 
-    print(datos)
-    print(datos.values("IdAlumno"))
 
-    datos = zip(range(1, len(datos) + 1), datos, ContarFaltas(datos.values("IdAlumno")), ContarFaltasHistorico(datos.values("IdAlumno")))
+    # ANTES DEL ZIP:
+    curso_academico_actual = get_current_academic_year()
+
+    contar_actual = []
+    contar_hist = []
+    numeros = []
+
+    for i, d in enumerate(datos, 1):
+        id_alum = d.IdAlumno_id  # Directo del objeto, MISMO ORDEN
+
+        if id_alum:
+            # Actual
+            am = Amonestaciones.objects.filter(IdAlumno_id=id_alum,
+                                               curso_academico=curso_academico_actual).count()
+            sa = Sanciones.objects.filter(IdAlumno_id=id_alum,
+                                          curso_academico=curso_academico_actual).count()
+            contar_actual.append(f"{am}/{sa}")
+
+            # Histórico
+            am_hist = Amonestaciones.objects.filter(IdAlumno_id=id_alum).count()
+            sa_hist = Sanciones.objects.filter(IdAlumno_id=id_alum).count()
+            contar_hist.append(f"{am_hist}/{sa_hist}")
+        else:
+            contar_actual.append("0/0")
+            contar_hist.append("0/0")
+
+        numeros.append(i)
+
+    datos = zip(numeros, datos, contar_actual, contar_hist)
+
+    #datos = zip(range(1, len(datos) + 1), datos, ContarFaltas(datos.values("IdAlumno")), ContarFaltasHistorico(datos.values("IdAlumno")))
     context = {
         'form': form,
         'datos': datos,
@@ -907,7 +935,7 @@ def alumnos(request):
                'cursos_academicos': cursos_academicos}
     return render(request, 'lalumnos.html', context)
 
-
+'''
 def ContarFaltas(lista_id):
     curso_academico_actual = get_current_academic_year()
 
@@ -920,6 +948,8 @@ def ContarFaltas(lista_id):
 
     return contar
 
+
+
 def ContarFaltasHistorico(lista_id):
 
     contar = []
@@ -929,6 +959,31 @@ def ContarFaltasHistorico(lista_id):
 
         contar.append(am + "/" + sa)
     return contar
+'''
+
+def ContarFaltas(lista_id):
+    curso_academico_actual = get_current_academic_year()
+
+    contar = []
+    for alum in lista_id:
+        am = str(len(Amonestaciones.objects.filter(IdAlumno_id=list(alum.values())[0],
+                                                   curso_academico=curso_academico_actual)))
+        sa = str(
+            len(Sanciones.objects.filter(IdAlumno_id=list(alum.values())[0], curso_academico=curso_academico_actual)))
+
+        contar.append(am + "/" + sa)
+    return contar
+
+
+def ContarFaltasHistorico(lista_id):
+    contar = []
+    for alum in lista_id:
+        am = str(len(Amonestaciones.objects.filter(IdAlumno_id=list(alum.values())[0])))
+        sa = str(len(Sanciones.objects.filter(IdAlumno_id=list(alum.values())[0])))
+
+        contar.append(am + "/" + sa)
+    return contar
+
 
 # Curro Jul 24: Anado view para que un profesor pueda poner un parte
 @login_required(login_url='/')

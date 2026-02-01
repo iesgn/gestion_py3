@@ -88,9 +88,7 @@
             </div>
         </div>
 
-         <div class="p-3">
-            <input type="text" id="menu-search-input" placeholder="Buscar en el menú..." class="form-control">
-        </div>
+
         <!--- Sidenav Menu -->
         <ul class="side-nav">
 
@@ -292,6 +290,12 @@
                             <li class="side-nav-item">
                                 <a href="/convivencia/reincorporacionsanciones" class="side-nav-link">
                                     <span class="menu-text" data-lang="dashboard-two">Reincorporación</span>
+                                </a>
+                            </li>
+
+                            <li class="side-nav-item">
+                                <a href="/convivencia/historico-sanciones/" class="side-nav-link">
+                                    <span class="menu-text" data-lang="dashboard-two">Histórico Sanciones</span>
                                 </a>
                             </li>
 
@@ -653,7 +657,7 @@
             {% if user|has_group:"jefatura de estudios" %}
                 <li class="side-nav-item">
                     <a href="/permisos/asuntos-propio/lista/" class="side-nav-link">
-                        <span class="menu-icon"><i class="ti ti-stack-front"></i></span>
+                        <span class="menu-icon"><i class="ti ti-settings-check"></i></span>
                         <span class="menu-text" data-lang="landing-page">Gestión Días Asuntos propios</span>
                     </a>
                 </li>
@@ -661,7 +665,7 @@
 
             <li class="side-nav-item">
                     <a href="/permisos/asuntos-propio/calendario/" class="side-nav-link">
-                        <span class="menu-icon"><i class="ti ti-stack-front"></i></span>
+                        <span class="menu-icon"><i class="ti ti-calendar-smile"></i></span>
                         <span class="menu-text" data-lang="landing-page">Calendario Días Asuntos propios</span>
                     </a>
                 </li>

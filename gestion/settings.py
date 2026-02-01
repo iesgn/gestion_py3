@@ -2,7 +2,7 @@
 ╔════════════════════════════════════════════════════════════════════════════╗
 ║                          GESTION@ - GESTIÓN DE CENTROS EDUCATIVOS         ║
 ║                                                                            ║
-║ Copyright © 2023-2025 Francisco Fornés Rumbao, Raúl Reina Molina          ║
+║ Copyright © 2023-2026 Francisco Fornés Rumbao, Raúl Reina Molina          ║
 ║                          Proyecto base por José Domingo Muñoz Rodríguez    ║
 ║                                                                            ║
 ║ Todos los derechos reservados. Prohibida la reproducción, distribución,   ║

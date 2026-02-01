@@ -2,7 +2,7 @@
 ╔════════════════════════════════════════════════════════════════════════════╗
 ║                          GESTION@ - GESTIÓN DE CENTROS EDUCATIVOS         ║
 ║                                                                            ║
-║ Copyright © 2023-2025 Francisco Fornés Rumbao, Raúl Reina Molina          ║
+║ Copyright © 2023-2026 Francisco Fornés Rumbao, Raúl Reina Molina          ║
 ║                          Proyecto base por José Domingo Muñoz Rodríguez    ║
 ║                                                                            ║
 ║ Todos los derechos reservados. Prohibida la reproducción, distribución,   ║
@@ -16,7 +16,7 @@
 """
 
 import json
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from sqlite3 import IntegrityError
 
 from django.contrib import messages
@@ -173,32 +173,45 @@ def misreservas(request):
 @login_required(login_url='/')
 @user_passes_test(group_check_tde, login_url='/')
 def reservas(request):
-
     curso_academico_actual = get_current_academic_year()
+    hoy = date.today()
 
-    lista_reservas = Reservas.objects.filter(curso_academico=curso_academico_actual).order_by('-Fecha')  # Ordenar directamente en la consulta
-    reservas_info = []  # Lista para almacenar la información de cada reserva junto con el curso y aula
+    # Reservas activas: hoy o futuras
+    reservas_activas_qs = Reservas.objects.filter(
+        curso_academico=curso_academico_actual,
+        Fecha__gte=hoy
+    ).order_by('Fecha')
 
-    for reserva in lista_reservas:
-        # Buscar el item del horario correspondiente a la fecha y tramo de la reserva
-        item_horario = ItemHorario.objects.filter(
-            profesor=reserva.Profesor,
-            dia=reserva.Fecha.weekday() + 1,  # weekday() da 0 para Lunes, entonces +1 para que coincida
-            tramo=int(reserva.Hora)
-        ).first()
+    # Reservas pasadas: fecha < hoy (si quieres, limita a las últimas N)
+    reservas_pasadas_qs = Reservas.objects.filter(
+        curso_academico=curso_academico_actual,
+        Fecha__lt=hoy
+    ).order_by('-Fecha')[:1000]  # por ejemplo, últimas 1000
 
-        # Añadir la información de la reserva junto con curso y aula (si existen en el horario)
-        reservas_info.append({
-            'r': reserva,
-            'curso': item_horario.unidad if item_horario else None,
-            'aula': item_horario.aula if item_horario else None,
-        })
+    def construir_info(lista_reservas):
+        info = []
+        for reserva in lista_reservas.select_related('Profesor', 'Reservable__TiposReserva'):
+            item_horario = ItemHorario.objects.filter(
+                profesor=reserva.Profesor,
+                dia=reserva.Fecha.weekday() + 1,
+                tramo=int(reserva.Hora)
+            ).select_related('unidad', 'aula').first()
+
+            info.append({
+                'r': reserva,
+                'curso': item_horario.unidad if item_horario else None,
+                'aula': item_horario.aula if item_horario else None,
+            })
+        return info
+
+    reservas_activas = construir_info(reservas_activas_qs)
+    reservas_pasadas = construir_info(reservas_pasadas_qs)
 
     context = {
-        'reservas_info': reservas_info,
-        'menu_reservas': True
+        'reservas_activas': reservas_activas,
+        'reservas_pasadas': reservas_pasadas,
+        'menu_reservas': True,
     }
-
     return render(request, 'reservas.html', context)
 
 @login_required(login_url='/')

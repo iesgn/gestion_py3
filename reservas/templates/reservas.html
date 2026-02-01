@@ -5,7 +5,6 @@
 {% block title %}Centro{% endblock %}
 
 {% block css %}
-
     <!-- Datatables css -->
     <link href="{% static 'plugins/datatables/responsive.bootstrap5.min.css' %}" rel="stylesheet" type="text/css">
 
@@ -20,22 +19,15 @@
             background-color: #ddbcbc !important;
         }
     </style>
-
 {% endblock %}
 
-
-
-
 {% block content %}
-
-
     <div class="container-fluid">
         <div class="page-title-head d-flex align-items-center">
             <div class="flex-grow-1">
                 <h4 class="fs-sm text-uppercase fw-bold m-0">Reservas</h4>
             </div>
         </div>
-
 
         <div class="row">
             <div class="col-12">
@@ -45,97 +37,143 @@
 
                         <div class="col-auto">
                             <div role="group" aria-label="Layout toggle button group">
-                                <a href="/reservas/verreservascal" class="btn btn-secondary"><i
-                                        class="ti ti-calendar me-1"></i> Vista calendario </a>
+                                <a href="/reservas/verreservascal" class="btn btn-secondary">
+                                    <i class="ti ti-calendar me-1"></i> Vista calendario
+                                </a>
 
-                                <a href="/reservas/reservaprofe" class="btn btn-warning"><i
-                                        class="ti ti-plus me-1"></i> Nueva reserva para profesor/a </a>
-
+                                <a href="/reservas/reservaprofe" class="btn btn-warning">
+                                    <i class="ti ti-plus me-1"></i> Nueva reserva para profesor/a
+                                </a>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="card-body">
 
-                        <table class="table table-striped table-bordered table-hover dt-responsive align-middle mb-0 dataTables-reservas">
-                            <thead class="thead-sm text-uppercase fs-xxs">
-
-                            <tr>
-                                <th class="text-center">Tipo</th>
-                                <th class="text-center">Fecha</th>
-                                <th class="text-center">Tramo horario</th>
-                                <th class="text-center">Espacio/Recurso</th>
-                                <th class="text-center">Localización</th>
-                                <th class="text-center">Aula/Unidad</th>
-                                <th class="text-center">Profesor/a</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
-
-
-                            </thead>
-                            <tbody>
-                            {% for item in reservas_info %}
+                        <!-- TABLA RESERVAS ACTIVAS -->
+                        <h5 class="mb-3">Reservas activas</h5>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-striped table-bordered table-hover dt-responsive align-middle mb-0 dataTables-reservas-activas">
+                                <thead class="thead-sm text-uppercase fs-xxs">
+                                <tr>
+                                    <th class="text-center">Tipo</th>
+                                    <th class="text-center">Fecha</th>
+                                    <th class="text-center">Tramo horario</th>
+                                    <th class="text-center">Espacio/Recurso</th>
+                                    <th class="text-center">Localización</th>
+                                    <th class="text-center">Aula/Unidad</th>
+                                    <th class="text-center">Profesor/a</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in reservas_activas %}
                                     <tr>
                                         <td class="text-center">
                                             {% if item.r.Reservable.TiposReserva.TipoReserva == 'Espacio' %}
-                                                <span class="badge badge-label text-bg-info">{{ item.r.Reservable.TiposReserva.TipoReserva }}</span>
+                                                <span class="badge badge-label text-bg-info">
+                                                {{ item.r.Reservable.TiposReserva.TipoReserva }}
+                                            </span>
                                             {% else %}
-                                                <span class="badge badge-label text-bg-secondary">{{ item.r.Reservable.TiposReserva.TipoReserva }}</span>
+                                                <span class="badge badge-label text-bg-secondary">
+                                                {{ item.r.Reservable.TiposReserva.TipoReserva }}
+                                            </span>
                                             {% endif %}
-
-
                                         </td>
                                         <td>{{ item.r.Fecha|date:"d/m/Y" }}</td>
                                         <td><strong>{{ item.r.get_Hora_display }}</strong></td>
                                         <td><strong>{{ item.r }}</strong></td>
                                         <td>{{ item.r.Reservable.Descripcion }}</td>
                                         {% if item.aula or item.curso %}
-                                        <td>{{ item.aula }} / {{ item.curso }}</td>
+                                            <td>{{ item.aula }} / {{ item.curso }}</td>
                                         {% else %}
-                                        <td>Desconocido</td>
+                                            <td>Desconocido</td>
                                         {% endif %}
                                         <td><strong>{{ item.r.Profesor }}</strong></td>
-                                        <td style="text-align: center; vertical-align: middle;">
-
+                                        <td class="text-center">
                                             <a class="btn btn-sm btn-danger btn-icon borrar-reserva"
-                                               style="color: white" data-bs-toggle="tooltip"
-                                               data-bs-placement="top" title="Borrar" data-id="{{ item.r.id }}">
+                                               style="color: white"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="top"
+                                               title="Borrar"
+                                               data-id="{{ item.r.id }}">
                                                 <i class="ti ti-trash"></i>
                                             </a>
                                         </td>
-
-
                                     </tr>
-
                                 {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
 
+                        <!-- TABLA RESERVAS PASADAS -->
+                        <h5 class="mb-3 mt-4">Reservas pasadas</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover dt-responsive align-middle mb-0 dataTables-reservas-pasadas">
+                                <thead class="thead-sm text-uppercase fs-xxs">
+                                <tr>
+                                    <th class="text-center">Tipo</th>
+                                    <th class="text-center">Fecha</th>
+                                    <th class="text-center">Tramo horario</th>
+                                    <th class="text-center">Espacio/Recurso</th>
+                                    <th class="text-center">Localización</th>
+                                    <th class="text-center">Aula/Unidad</th>
+                                    <th class="text-center">Profesor/a</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in reservas_pasadas %}
+                                    <tr class="strikethrough">
+                                        <td class="text-center">
+                                            {% if item.r.Reservable.TiposReserva.TipoReserva == 'Espacio' %}
+                                                <span class="badge badge-label text-bg-info">
+                                                {{ item.r.Reservable.TiposReserva.TipoReserva }}
+                                            </span>
+                                            {% else %}
+                                                <span class="badge badge-label text-bg-secondary">
+                                                {{ item.r.Reservable.TiposReserva.TipoReserva }}
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ item.r.Fecha|date:"d/m/Y" }}</td>
+                                        <td><strong>{{ item.r.get_Hora_display }}</strong></td>
+                                        <td><strong>{{ item.r }}</strong></td>
+                                        <td>{{ item.r.Reservable.Descripcion }}</td>
+                                        {% if item.aula or item.curso %}
+                                            <td>{{ item.aula }} / {{ item.curso }}</td>
+                                        {% else %}
+                                            <td>Desconocido</td>
+                                        {% endif %}
+                                        <td><strong>{{ item.r.Profesor }}</strong></td>
+                                        <td class="text-center">
+                                            <a class="btn btn-sm btn-danger btn-icon borrar-reserva"
+                                               style="color: white"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="top"
+                                               title="Borrar"
+                                               data-id="{{ item.r.id }}">
+                                                <i class="ti ti-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
 
-                            </tbody>
-                        </table>
+                    </div> <!-- end card-body -->
 
-
-                    </div> <!-- end card-body-->
-
-                </div>
-                <div class="card-footer border-0">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div data-table-pagination-info="projects"></div>
-                        <div data-table-pagination></div>
+                    <div class="card-footer border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div data-table-pagination-info="projects"></div>
+                            <div data-table-pagination></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-        </div><!-- end col -->
-
-
-
-
-
-    </div><!-- end row -->
-
-    <!-- Modal para mostrar los detalles -->
-
+            </div><!-- end col -->
+        </div><!-- end row -->
+    </div><!-- end container -->
 {% endblock %}
 
 {% block js %}
@@ -145,8 +183,6 @@
     <script src="{% static 'plugins/datatables/dataTables.bootstrap5.min.js' %}"></script>
     <script src="{% static 'plugins/datatables/dataTables.responsive.min.js' %}"></script>
     <script src="{% static 'plugins/datatables/responsive.bootstrap5.min.js' %}"></script>
-
-
 
     <script src="{% static 'plugins/datatables/dataTables.buttons.min.js' %}"></script>
     <script src="{% static 'plugins/datatables/buttons.bootstrap5.min.js' %}"></script>
@@ -165,36 +201,77 @@
     <script src="{% static 'plugins/sweetalert2/sweetalert2.min.js' %}"></script>
 
     <script>
-
-        jQuery.extend(jQuery.fn.dataTable.ext.type.order, {
-            "date-eu-pre": function (date) {
-                // Si la fecha está vacía o mal formada, devolvemos valor alto para dejarla al final
-                if (!date || date.trim() === '') {
-                    return 0;
-                }
-
-                const eu_date = date.split('/');
-                // dd/mm/yyyy → yyyy+mm+dd como número
-                return (eu_date[2] + eu_date[1] + eu_date[0]) * 1;
-            },
-            "date-eu-asc": function (a, b) {
-                return a - b;
-            },
-            "date-eu-desc": function (a, b) {
-                return b - a;
-            }
-        });
-
-
         $(document).ready(function () {
 
-            $('.dataTables-reservas').each(function () {
-            $(this).DataTable({
+            // Tabla ACTIVAS (sin botones de exportación, pocas filas)
+            const tableActivas = $('.dataTables-reservas-activas').DataTable({
                 dom: "<'d-md-flex justify-content-between align-items-center my-2'<'dropdown'B>f>" +
                     "rt" +
                     "<'d-md-flex justify-content-between align-items-center mt-2'ip>",
                 responsive: true,
-                pageLength: 50,
+                pageLength: 25,
+                fixedHeader: {
+                    header: true,
+                    headerOffset: 65
+                },
+                order: [[1, 'asc']],
+                language: {
+                    url: "{% static 'plugins/datatables/es-ES.json' %}",
+                    paginate: {
+                        first: '<i class="ti ti-chevrons-left"></i>',
+                        previous: '<i class="ti ti-chevron-left"></i>',
+                        next: '<i class="ti ti-chevron-right"></i>',
+                        last: '<i class="ti ti-chevrons-right"></i>'
+                    }
+                },
+                buttons: [
+                    {
+                        extend: 'collection',
+                        text: '<i class="ti ti-download me-1"></i> Exportar datos',
+                        className: 'btn btn-sm btn-secondary dropdown-toggle',
+                        autoClose: true,
+                        buttons: [
+                            {
+                                extend: 'copy',
+                                text: '<i class="ti ti-copy me-1 fs-lg align-middle"></i> Copiar',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'csv',
+                                text: '<i class="ti ti-file-type-csv me-1 fs-lg align-middle"></i> CSV',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'excel',
+                                text: '<i class="ti ti-file-spreadsheet me-1 fs-lg align-middle"></i> Excel',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'print',
+                                text: '<i class="ti ti-printer me-1 fs-lg align-middle"></i> Imprimir',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'pdf',
+                                text: '<i class="ti ti-file-text me-1 fs-lg align-middle"></i> PDF',
+                                className: 'dropdown-item'
+                            }
+                        ]
+                    }
+                ],
+                columnDefs: [
+                    {targets: 1, type: 'date-eu'}
+                ]
+            });
+
+            // Tabla PASADAS (con botones de exportación)
+            const tablePasadas = $('.dataTables-reservas-pasadas').DataTable({
+                dom: "<'d-md-flex justify-content-between align-items-center my-2'<'dropdown'B>f>" +
+                    "rt" +
+                    "<'d-md-flex justify-content-between align-items-center mt-2'ip>",
+                responsive: true,
+                pageLength: 25,
+
                 fixedHeader: {
                     header: true,
                     headerOffset: 65
@@ -234,15 +311,6 @@
                         ]
                     }
                 ],
-
-                columnDefs: [
-                    {
-                        targets: 1,
-                        type: 'date-eu'
-                    }
-                ],
-
-
                 order: [[1, 'desc']],
                 language: {
                     url: "{% static 'plugins/datatables/es-ES.json' %}",
@@ -252,86 +320,53 @@
                         next: '<i class="ti ti-chevron-right"></i>',
                         last: '<i class="ti ti-chevrons-right"></i>'
                     }
-                }
+                },
+                columnDefs: [
+                    {targets: 1, type: 'date-eu'}
+                ]
             });
-            });
 
-
-            $(document).on('click', '.borrar-reserva', function(e) {
-                var reservaId = $(this).data('id');
-                var row = $(this).closest('tr'); // Obtener la fila de la tabla
-
+            // Borrar reserva (en ambas tablas)
+            $(document).on('click', '.borrar-reserva', function () {
+                const reservaId = $(this).data('id');
+                const row = $(this).closest('tr');
 
                 Swal.fire({
                     title: "¿Estás seguro?",
-                    text: "El profesor/a tendrá que volver a hacer una nueva reserva para recuperarla.",
+                    text: "El profesor/a tendrá que volver a hacer una nueva reserva.",
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "Sí, borrar.",
+                    confirmButtonColor: "#dc3545",
+                    cancelButtonText: "Cancelar",
+                    confirmButtonText: "Sí, borrar"
                 }).then((result) => {
                     if (result.isConfirmed) {
-
                         $.ajax({
-                            url: '{% url "eliminar_reserva" %}', // Asegúrate de que esta URL sea la correcta
+                            url: '{% url "eliminar_reserva" %}',
                             method: 'POST',
                             data: {
-                                'id': reservaId,
-                                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                                id: reservaId,
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
                             },
                             success: function (response) {
                                 if (response.success) {
-                                    Swal.fire({
-                                        title: "¡Borrada!",
-                                        text: "La reserva ha sido borrada.",
-                                        icon: "success"
-                                    });
-
-                                    // Eliminar la fila de la tabla
-                                    tableReservas.row(row).remove().draw();
+                                    Swal.fire('¡Borrada!', 'Reserva eliminada.', 'success');
+                                    if (row.closest('.dataTables-reservas-activas').length) {
+                                        tableActivas.row(row).remove().draw();
+                                    } else {
+                                        tablePasadas.row(row).remove().draw();
+                                    }
                                 } else {
-                                    Swal.fire({
-                                        title: "Error",
-                                        text: "No se pudo borrar la reserva.",
-                                        icon: "error"
-                                    });
+                                    Swal.fire('Error', 'No se pudo borrar la reserva.', 'error');
                                 }
                             },
-                            error: function (xhr, status, error) {
-                                Swal.fire({
-                                    title: "Error",
-                                    text: "Ocurrió un error al intentar borrar la reserva.",
-                                    icon: "error"
-                                });
+                            error: function () {
+                                Swal.fire('Error', 'Ocurrió un error al intentar borrar la reserva.', 'error');
                             }
                         });
-
-
                     }
                 });
             });
-
-
-            // Obtener la fecha actual
-            var today = moment();
-
-            // Iterar sobre cada fila de la tabla
-            $('.dataTables-reservas tbody tr').each(function () {
-                var dateCell = $(this).find('td').eq(1); // Obtener la celda de la fecha (índice 1)
-                var dateStr = dateCell.text(); // Obtener el texto de la celda de fecha
-                var date = moment(dateStr, 'DD/MM/YYYY'); // Convertir el texto a un objeto Moment
-
-                // Comparar la fecha con la fecha actual
-                if (date.isBefore(today, 'day')) {
-                    // Añadir la clase 'strikethrough' a todas las celdas excepto la primera
-                    $(this).find('td').addClass('strikethrough');
-                    // Vaciar el contenido de la última celda
-                    $(this).find('td:last').empty();
-                }
-            });
-
         });
-
-
     </script>
 {% endblock %}

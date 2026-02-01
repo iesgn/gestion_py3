@@ -2,7 +2,7 @@
 ╔════════════════════════════════════════════════════════════════════════════╗
 ║                          GESTION@ - GESTIÓN DE CENTROS EDUCATIVOS         ║
 ║                                                                            ║
-║ Copyright © 2023-2025 Francisco Fornés Rumbao, Raúl Reina Molina          ║
+║ Copyright © 2023-2026 Francisco Fornés Rumbao, Raúl Reina Molina          ║
 ║                          Proyecto base por José Domingo Muñoz Rodríguez    ║
 ║                                                                            ║
 ║ Todos los derechos reservados. Prohibida la reproducción, distribución,   ║
@@ -360,7 +360,7 @@ def parteguardias_ajax(request):
         for tramo in range(1, 8):  # Tramos de 1 a 7 (1ª Hora a 6ª Hora más Recreo)
             # Obtener todos los IDs de los profesores asignados en el tramo y materia 'GUARDIAS'
             profesor_ids = item_horarios.filter(
-                Q(tramo=tramo) & Q(materia__in=["GUARDIAS", "GUARDIA CONVIVENCIA", "GUARDIA HORIZONTE", "GUARDIA ACE"]) & Q(
+                Q(tramo=tramo) & Q(materia__in=["GUARDIAS", "GUARDIAS (PG1)", "GUARDIAS (PG2)", "GUARDIAS (PG3)", "GUARDIAS (PG4)", "GUARDIA CONVIVENCIA", "GUARDIA HORIZONTE", "GUARDIA ACE"]) & Q(
                     profesor__Baja=False)
             ).values_list('profesor', flat=True).distinct()
 
@@ -411,6 +411,10 @@ def parteguardias_ajax(request):
                             "GUARDIA HORIZONTE" in materias_guardia
                     ),
                     'es_guardia_DACE': ("GUARDIA ACE" in materias_guardia),
+                    'es_guardia_PG1': ("GUARDIAS (PG1)" in materias_guardia),
+                    'es_guardia_PG2': ("GUARDIAS (PG2)" in materias_guardia),
+                    'es_guardia_PG3': ("GUARDIAS (PG3)" in materias_guardia),
+                    'es_guardia_PG4': ("GUARDIAS (PG4)" in materias_guardia),
                 })
 
             # Ordenar la lista primero por tiempo y luego por porcentaje

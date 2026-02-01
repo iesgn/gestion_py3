@@ -2,7 +2,7 @@
 ╔════════════════════════════════════════════════════════════════════════════╗
 ║                          GESTION@ - GESTIÓN DE CENTROS EDUCATIVOS         ║
 ║                                                                            ║
-║ Copyright © 2023-2025 Francisco Fornés Rumbao, Raúl Reina Molina          ║
+║ Copyright © 2023-2026 Francisco Fornés Rumbao, Raúl Reina Molina          ║
 ║                          Proyecto base por José Domingo Muñoz Rodríguez    ║
 ║                                                                            ║
 ║ Todos los derechos reservados. Prohibida la reproducción, distribución,   ║
@@ -1773,16 +1773,41 @@ def buscar_revision_libro_olvidado(request):
                 'observaciones': rev_alumno.observaciones,
             }
 
+    # ALUMNOS ACTUALES (con unidad)
+    alumnos_actuales = Alumnos.objects.filter(
+        Unidad__isnull=False
+    ).select_related('Unidad').order_by('Unidad__Curso', 'Nombre')
 
+    # ALUMNOS ANTIGUOS (sin unidad)
+    alumnos_antiguos = Alumnos.objects.filter(
+        Unidad__isnull=True
+    ).order_by('Nombre')
 
+    libros = LibroTexto.objects.select_related(
+        'materia',
+        'nivel',
+        'curso_academico'
+    ).only(
+               'id',
+               'titulo',
+               'materia',
+               'nivel',
+               'curso_academico',
+               ).order_by(
+        'curso_academico__nombre',
+        'titulo'
+    )
     context = {
         'alumno_seleccionado': alumno_seleccionado,
         'libro_seleccionado': libro_seleccionado,
         'curso_academico_seleccionado': curso_academico_seleccionado,
         'revisiones_posibles': list(revisiones_unicas.values()),
         'cursos_academicos': CursoAcademico.objects.all().order_by('-año_inicio'),
-        'alumnos': Alumnos.objects.all().order_by('Nombre'),
-        'libros': LibroTexto.objects.only('id', 'titulo', 'isbn', 'editorial').order_by('titulo')[:200],
+        'alumnos_antiguos': alumnos_antiguos,
+        'alumnos_actuales': alumnos_actuales,
+
+        'libros': libros,
+        'unidades': Cursos.objects.all().order_by('Curso'),
     }
 
 
