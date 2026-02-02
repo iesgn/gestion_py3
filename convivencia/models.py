@@ -71,6 +71,7 @@ class Amonestaciones(models.Model):
 	Medio = models.CharField(max_length=1, choices=MEDIOS_CONTACTO,blank=True, null=True)
 	TelefonoComunicado = models.TextField(blank=True, null=True)
 	ObservacionComunicado = models.TextField(blank=True, null=True)
+	Cerrado = models.BooleanField(default=True, verbose_name="Amonestación cerrada")
 
 	curso_academico = models.ForeignKey('centro.CursoAcademico', on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -126,6 +127,7 @@ class Sanciones(models.Model):
 	Sancion=models.CharField(max_length=100,blank=True)
 	Comentario=models.TextField(blank=True)
 	NoExpulsion = models.BooleanField(default=False,verbose_name="Medidas de flexibilización a la expulsión")
+	Cerrado = models.BooleanField(default=True, verbose_name="Sanción cerrada")
 
 	curso_academico = models.ForeignKey('centro.CursoAcademico', on_delete=models.SET_NULL, null=True, blank=True)
 
